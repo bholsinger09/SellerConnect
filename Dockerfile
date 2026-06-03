@@ -12,16 +12,15 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
 # Set up a build area
 WORKDIR /build
 
+# Copy backend files first
+COPY SellerConnectBackend ./
+
 # First just resolve dependencies.
 # This creates a cached layer that can be reused
 # as long as your Package.swift/Package.resolved
 # files do not change.
-COPY ./Package.* ./
 RUN swift package resolve \
         $([ -f ./Package.resolved ] && echo "--force-resolved-versions" || true)
-
-# Copy entire repo into container
-COPY . .
 
 RUN mkdir /staging
 
