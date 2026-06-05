@@ -10,23 +10,14 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     && apt-get install -y libjemalloc-dev
 
 # Set up a build area
-WORKDIR /build
+WORKDIR /app
 
-# Copy backend Package files
-COPY SellerConnectBackend/Package.swift .
-COPY SellerConnectBackend/Package.resolved .
+# Copy entire backend directory
+COPY SellerConnectBackend/ .
 
-# Resolve dependencies
-RUN swift package resolve
-
-# Copy backend source code
-COPY SellerConnectBackend/Sources ./Sources
-COPY SellerConnectBackend/Tests ./Tests 2>/dev/null || true
-COPY SellerConnectBackend/Public ./Public 2>/dev/null || true
-COPY SellerConnectBackend/Resources ./Resources 2>/dev/null || true
-
-# Build the application
-RUN swift build -c release -v
+# Resolve dependencies and build
+RUN swift package resolve && \
+    swift build -c release -v
 
 # ================================
 # Run image
@@ -46,14 +37,10 @@ RUN useradd --user-group --create-home --system --skel /dev/null --home-dir /app
 WORKDIR /app
 
 # Copy built executable from builder
-COPY --from=build --chown=vapor:vapor /build/.build/release/SellerConnectBackend /app/SellerConnectBackend
-
-# Copy resources if they exist
-COPY --from=build --chown=vapor:vapor /build/Public /app/Public 2>/dev/null || true
-COPY --from=build --chown=vapor:vapor /build/Resources /app/Resources 2>/dev/null || true
+COPY --from=build --chown=vapor:vapor /app/.build/release/SellerConnectBackend /app/bin/SellerConnectBackend
 
 USER vapor:vapor
 
 EXPOSE 8080
 
-ENTRYPOINT ["/app/SellerConnectBackend"]
+ENTRYPOINT ["/app/bin/SellerConnectBackend"]
