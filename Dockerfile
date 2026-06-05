@@ -12,8 +12,18 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
 # Set up a build area
 WORKDIR /build
 
-# Copy backend files
-COPY SellerConnectBackend .
+# Copy backend Package files
+COPY SellerConnectBackend/Package.swift .
+COPY SellerConnectBackend/Package.resolved .
+
+# Resolve dependencies
+RUN swift package resolve
+
+# Copy backend source code
+COPY SellerConnectBackend/Sources ./Sources
+COPY SellerConnectBackend/Tests ./Tests 2>/dev/null || true
+COPY SellerConnectBackend/Public ./Public 2>/dev/null || true
+COPY SellerConnectBackend/Resources ./Resources 2>/dev/null || true
 
 # Build the application
 RUN swift build -c release -v
