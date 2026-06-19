@@ -32,7 +32,7 @@ struct SellerConnectTests {
     @Test
     func passwordValidMissingNumber() async throws {
         let viewModel = RegisterViewModel()
-        viewModel.password = "SecurePass!"
+        viewModel.password = "Test!"
         
         #expect(!viewModel.passwordValid, "Password without number should be invalid")
     }
@@ -40,7 +40,7 @@ struct SellerConnectTests {
     @Test
     func passwordValidMissingSpecialCharacter() async throws {
         let viewModel = RegisterViewModel()
-        viewModel.password = "SecurePass123"
+        viewModel.password = "Test123"
         
         #expect(!viewModel.passwordValid, "Password without special character should be invalid")
     }
