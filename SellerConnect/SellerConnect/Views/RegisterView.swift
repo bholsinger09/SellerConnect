@@ -54,7 +54,7 @@ struct RegisterView: View {
                     RequirementRow(requirement: "At least 6 characters", satisfied: viewModel.password.count >= 6)
                     RequirementRow(requirement: "At least 1 uppercase letter", satisfied: viewModel.password.range(of: "[A-Z]", options: .regularExpression) != nil)
                     RequirementRow(requirement: "At least 1 number", satisfied: viewModel.password.range(of: "[0-9]", options: .regularExpression) != nil)
-                    RequirementRow(requirement: "At least 1 special character (no _ or -)", satisfied: viewModel.password.range(of: "[\\W&&[^_-]]", options: .regularExpression) != nil)
+                    RequirementRow(requirement: "At least 1 special character (no _ or -)", satisfied: viewModel.password.range(of: "[^a-zA-Z0-9_-]", options: .regularExpression) != nil)
                     RequirementRow(requirement: "No underscores or dashes", satisfied: viewModel.password.range(of: "[_-]", options: .regularExpression) == nil)
                 }
                 .font(.caption)
