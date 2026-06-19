@@ -16,7 +16,7 @@ struct SellerConnectTests {
     @Test
     func passwordValidAllRequirements() async throws {
         let viewModel = RegisterViewModel()
-        viewModel.password = "SecurePass123!"
+        viewModel.password = "Test@123!"
         
         #expect(viewModel.passwordValid, "Password meeting all requirements should be valid")
     }
@@ -56,7 +56,7 @@ struct SellerConnectTests {
     @Test
     func passwordValidContainsUnderscore() async throws {
         let viewModel = RegisterViewModel()
-        viewModel.password = "Secure_Pass123!"
+        viewModel.password = "Test_123!"
         
         #expect(!viewModel.passwordValid, "Password containing underscore should be invalid")
     }
@@ -64,7 +64,7 @@ struct SellerConnectTests {
     @Test
     func passwordValidContainsDash() async throws {
         let viewModel = RegisterViewModel()
-        viewModel.password = "Secure-Pass123!"
+        viewModel.password = "Test-123!"
         
         #expect(!viewModel.passwordValid, "Password containing dash should be invalid")
     }
@@ -83,8 +83,8 @@ struct SellerConnectTests {
     @Test
     func passwordsMatchIdentical() async throws {
         let viewModel = RegisterViewModel()
-        viewModel.password = "SecurePass123!"
-        viewModel.confirmPassword = "SecurePass123!"
+        viewModel.password = "Test@123!"
+        viewModel.confirmPassword = "Test@123!"
         
         #expect(viewModel.passwordsMatch, "Identical passwords should match")
     }
@@ -92,8 +92,8 @@ struct SellerConnectTests {
     @Test
     func passwordsMatchDifferent() async throws {
         let viewModel = RegisterViewModel()
-        viewModel.password = "SecurePass123!"
-        viewModel.confirmPassword = "DifferentPass456!"
+        viewModel.password = "Test@123!"
+        viewModel.confirmPassword = "Test@456!"
         
         #expect(!viewModel.passwordsMatch, "Different passwords should not match")
     }
@@ -103,8 +103,8 @@ struct SellerConnectTests {
         let viewModel = RegisterViewModel()
         viewModel.firstName = "John"
         viewModel.email = "john@example.com"
-        viewModel.password = "SecurePass123!"
-        viewModel.confirmPassword = "SecurePass123!"
+        viewModel.password = "Test@123!"
+        viewModel.confirmPassword = "Test@123!"
         
         #expect(viewModel.canSubmit, "Should allow submit when all fields are valid")
     }
@@ -114,8 +114,8 @@ struct SellerConnectTests {
         let viewModel = RegisterViewModel()
         viewModel.firstName = ""
         viewModel.email = "john@example.com"
-        viewModel.password = "SecurePass123!"
-        viewModel.confirmPassword = "SecurePass123!"
+        viewModel.password = "Test@123!"
+        viewModel.confirmPassword = "Test@123!"
         
         #expect(!viewModel.canSubmit, "Should not allow submit when first name is missing")
     }
@@ -125,8 +125,8 @@ struct SellerConnectTests {
         let viewModel = RegisterViewModel()
         viewModel.firstName = "John"
         viewModel.email = ""
-        viewModel.password = "SecurePass123!"
-        viewModel.confirmPassword = "SecurePass123!"
+        viewModel.password = "Test@123!"
+        viewModel.confirmPassword = "Test@123!"
         
         #expect(!viewModel.canSubmit, "Should not allow submit when email is missing")
     }
@@ -147,8 +147,8 @@ struct SellerConnectTests {
         let viewModel = RegisterViewModel()
         viewModel.firstName = "John"
         viewModel.email = "john@example.com"
-        viewModel.password = "SecurePass123!"
-        viewModel.confirmPassword = "DifferentPass456!"
+        viewModel.password = "Test@123!"
+        viewModel.confirmPassword = "Test@456!"
         
         #expect(!viewModel.canSubmit, "Should not allow submit when passwords don't match")
     }
@@ -160,8 +160,8 @@ struct SellerConnectTests {
         let viewModel = RegisterViewModel()
         viewModel.firstName = "John"
         viewModel.email = "john@example.com"
-        viewModel.password = "SecurePass123!"
-        viewModel.confirmPassword = "SecurePass123!"
+        viewModel.password = "Test@123!"
+        viewModel.confirmPassword = "Test@123!"
         viewModel.errorMessage = "Test error"
         viewModel.registrationSuccess = true
         viewModel.showPassword = true
