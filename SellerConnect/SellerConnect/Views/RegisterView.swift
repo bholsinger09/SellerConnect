@@ -10,22 +10,34 @@ import SwiftUI
 struct RegisterView: View {
     @StateObject private var viewModel = RegisterViewModel()
     @Environment(\.dismiss) var dismiss
+    @FocusState private var focusedField: FocusField?
+    
+    enum FocusField {
+        case firstName
+        case email
+        case password
+        case confirmPassword
+    }
     
     var body: some View {
         Form {
             Section(header: Text("Register")) {
                 TextField("First Name", text: $viewModel.firstName)
+                    .focused($focusedField, equals: .firstName)
                     .autocapitalization(.words)
                     .textContentType(.givenName)
                 TextField("Email", text: $viewModel.email)
+                    .focused($focusedField, equals: .email)
                     .keyboardType(.emailAddress)
                     .autocapitalization(.none)
                     .textContentType(.emailAddress)
                 Group {
                     if viewModel.showPassword {
                         TextField("Password", text: $viewModel.password)
+                            .focused($focusedField, equals: .password)
                     } else {
                         SecureField("Password", text: $viewModel.password)
+                            .focused($focusedField, equals: .password)
                     }
                     Button(viewModel.showPassword ? "Hide" : "Show") {
                         viewModel.showPassword.toggle()
@@ -37,8 +49,10 @@ struct RegisterView: View {
                 Group {
                     if viewModel.showConfirmPassword {
                         TextField("Confirm Password", text: $viewModel.confirmPassword)
+                            .focused($focusedField, equals: .confirmPassword)
                     } else {
                         SecureField("Confirm Password", text: $viewModel.confirmPassword)
+                            .focused($focusedField, equals: .confirmPassword)
                     }
                     Button(viewModel.showConfirmPassword ? "Hide" : "Show") {
                         viewModel.showConfirmPassword.toggle()
@@ -63,14 +77,23 @@ struct RegisterView: View {
             if !viewModel.errorMessage.isEmpty {
                 Text(viewModel.errorMessage)
                     .foregroundStyle(.red)
+                    .onChange(of: viewModel.errorMessage) {
+                        if !viewModel.errorMessage.isEmpty {
+                            focusedField = nil
+                        }
+                    }
             }
             
             if viewModel.registrationSuccess {
                 Text("Registration successful!")
                     .foregroundStyle(.green)
+                    .onChange(of: viewModel.registrationSuccess) {
+                        focusedField = nil
+                    }
             }
             
             Button(viewModel.isRegistering ? "Registering..." : "Register") {
+                focusedField = nil
                 Task {
                     if !viewModel.passwordValid {
                         viewModel.errorMessage = "Password does not meet requirements."
