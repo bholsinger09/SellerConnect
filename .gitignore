@@ -60,3 +60,52 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# Environment Variables & Secrets
+# DO NOT COMMIT: environment files, credentials, API keys
+.env
+.env.local
+.env.*.local
+.env.production.local
+.env.development.local
+.env.test.local
+*.env
+
+# Credentials and API Keys
+credentials/
+secrets/
+keys/
+*.key
+*.pem
+*.p12
+.aws/
+.gcloud/
+
+# Configuration files with sensitive data
+config/local.*
+config/secrets.*
+test/fixtures/credentials.*
+test/credentials.json
+test/config.json
+
+# Xcode Build Artifacts
+DerivedData/
+*.xcarchive
+build/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Database files (local testing)
+*.sqlite
+*.sqlite3
+*.db
+db.sqlite
