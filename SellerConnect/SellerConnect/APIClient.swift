@@ -18,6 +18,8 @@ class APIClient {
         case decodingError
         case serverError(statusCode: Int, message: String)
         case networkError(Error)
+        case connectionRefused
+        case timeoutError
         
         var errorDescription: String? {
             switch self {
@@ -31,6 +33,10 @@ class APIClient {
                 return message
             case .networkError(let error):
                 return error.localizedDescription
+            case .connectionRefused:
+                return "Cannot connect to the server. Is the backend running on localhost:8080?"
+            case .timeoutError:
+                return "Connection timed out. Please check your network and try again."
             }
         }
     }
@@ -48,6 +54,7 @@ class APIClient {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = data
+        request.timeoutInterval = 10.0
         
         do {
             let (responseData, response) = try await URLSession.shared.data(for: request)
@@ -68,6 +75,21 @@ class APIClient {
             }
         } catch let error as APIError {
             throw error
+        } catch let error as NSError {
+            // Detect specific network errors
+            if error.domain == NSURLErrorDomain {
+                switch error.code {
+                case NSURLErrorNotConnectedToInternet, NSURLErrorNetworkConnectionLost:
+                    throw APIError.connectionRefused
+                case NSURLErrorTimedOut:
+                    throw APIError.timeoutError
+                case -1004: // "Could not connect to the server"
+                    throw APIError.connectionRefused
+                default:
+                    throw APIError.networkError(error)
+                }
+            }
+            throw APIError.networkError(error)
         } catch {
             throw APIError.networkError(error)
         }
@@ -78,8 +100,11 @@ class APIClient {
             throw APIError.invalidURL
         }
         
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 10.0
+        
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
+            let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw APIError.invalidResponse
             }
@@ -93,6 +118,21 @@ class APIClient {
             }
         } catch let error as APIError {
             throw error
+        } catch let error as NSError {
+            // Detect specific network errors
+            if error.domain == NSURLErrorDomain {
+                switch error.code {
+                case NSURLErrorNotConnectedToInternet, NSURLErrorNetworkConnectionLost:
+                    throw APIError.connectionRefused
+                case NSURLErrorTimedOut:
+                    throw APIError.timeoutError
+                case -1004: // "Could not connect to the server"
+                    throw APIError.connectionRefused
+                default:
+                    throw APIError.networkError(error)
+                }
+            }
+            throw APIError.networkError(error)
         } catch {
             throw APIError.networkError(error)
         }

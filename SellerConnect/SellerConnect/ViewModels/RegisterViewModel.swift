@@ -54,6 +54,10 @@ class RegisterViewModel: ObservableObject {
             resetForm()
         } catch let error as APIClient.APIError {
             switch error {
+            case .connectionRefused:
+                errorMessage = "Cannot connect to the server. Make sure the backend is running on localhost:8080."
+            case .timeoutError:
+                errorMessage = "Server connection timed out. Please check your network and try again."
             case .serverError(let statusCode, let message):
                 if statusCode == 409 {
                     errorMessage = "Email already registered."

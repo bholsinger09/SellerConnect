@@ -331,5 +331,30 @@ struct SellerConnectTests {
         #expect(viewModel.firstName == "John", "First name should be preserved")
         #expect(viewModel.email == "john@example.com", "Email should be preserved")
     }
+    
+    @Test("Server connection error shows helpful message")
+    func serverConnectionErrorMessage() async throws {
+        let viewModel = RegisterViewModel()
+        
+        // Simulate connection error (when backend isn't running)
+        viewModel.errorMessage = "Cannot connect to the server. Make sure the backend is running on localhost:8080."
+        
+        #expect(!viewModel.errorMessage.isEmpty, "Should have helpful error message")
+        #expect(viewModel.errorMessage.contains("localhost:8080"), "Should suggest checking backend")
+        #expect(!viewModel.registrationSuccess, "Should not mark as successful")
+    }
+    
+    @Test("Timeout error shows helpful message")
+    func timeoutErrorMessage() async throws {
+        let viewModel = RegisterViewModel()
+        
+        // Simulate timeout error
+        viewModel.errorMessage = "Server connection timed out. Please check your network and try again."
+        
+        #expect(!viewModel.errorMessage.isEmpty, "Should have helpful error message")
+        #expect(viewModel.errorMessage.contains("network"), "Should mention network")
+    }
 }
+
+
 
