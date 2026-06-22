@@ -9,12 +9,15 @@ import Foundation
 
 struct APIConfiguration {
     enum Environment {
+        case embedded
         case development
         case staging
         case production
         
         var baseURL: String {
             switch self {
+            case .embedded:
+                return "http://localhost:8080"
             case .development:
                 return "http://localhost:8080"
             case .staging:
@@ -27,7 +30,7 @@ struct APIConfiguration {
     
     static let current: Environment = {
         #if DEBUG
-        return .development
+        return .embedded
         #else
         return .production
         #endif
