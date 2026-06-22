@@ -42,33 +42,16 @@ class RegisterViewModel: ObservableObject {
         errorMessage = ""
         defer { isRegistering = false }
         
-        let payload: [String: String] = [
-            "firstName": firstName,
-            "email": email,
-            "password": password
-        ]
-        
         do {
-            let _: [String: String] = try await APIClient.shared.post(endpoint: "/users", body: payload)
+            _ = try await BackendManager.shared.registerUser(
+                firstName: firstName,
+                email: email,
+                password: password
+            )
             registrationSuccess = true
             resetForm()
-        } catch let error as APIClient.APIError {
-            switch error {
-            case .connectionRefused:
-                errorMessage = "Cannot connect to the server. Make sure the backend is running on localhost:8080."
-            case .timeoutError:
-                errorMessage = "Server connection timed out. Please check your network and try again."
-            case .serverError(let statusCode, let message):
-                if statusCode == 409 {
-                    errorMessage = "Email already registered."
-                } else {
-                    errorMessage = message
-                }
-            case .networkError(let networkError):
-                errorMessage = "Network error: \(networkError.localizedDescription)"
-            default:
-                errorMessage = error.errorDescription ?? "Registration failed. Please try again."
-            }
+        } catch let error as RegistrationError {
+            errorMessage = error.message
         } catch {
             errorMessage = "Registration failed. Please try again."
         }
