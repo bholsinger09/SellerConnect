@@ -53,10 +53,14 @@ struct RootView: View {
     }
     
     private func initializeServer() async {
-        // Server initialization happens here once SellerConnectBackend is linked to the project
-        // For now, this is a placeholder
-        serverStarted = true
-        print("⚠️  Backend not yet linked. Follow QUICKSTART.md to add the package.")
+        do {
+            try await BackendManager.shared.start()
+            serverStarted = true
+            print("✅ Server initialized")
+        } catch {
+            serverError = "Failed to start backend server: \(error.localizedDescription)"
+            print("❌ Server initialization error: \(error)")
+        }
     }
 }
 
