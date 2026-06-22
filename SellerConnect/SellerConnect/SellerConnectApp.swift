@@ -7,19 +7,23 @@
 
 import SwiftUI
 
-#if targetEnvironment(simulator) || targetEnvironment(macCatalyst)
-import SellerConnectBackend
-#endif
-
 @main
 struct SellerConnectApp: App {
+    var body: some Scene {
+        WindowGroup {
+            RootView()
+        }
+    }
+}
+
+struct RootView: View {
     @State private var serverStarted = false
     @State private var serverError: String?
     
-    var body: some Scene {
-        WindowGroup {
+    var body: some View {
+        Group {
             if let error = serverError {
-                VStack {
+                VStack(spacing: 16) {
                     Image(systemName: "exclamationmark.circle.fill")
                         .font(.system(size: 48))
                         .foregroundColor(.red)
@@ -28,6 +32,13 @@ struct SellerConnectApp: App {
                     Text(error)
                         .font(.caption)
                         .multilineTextAlignment(.center)
+                    
+                    Button("Retry") {
+                        Task {
+                            await initializeServer()
+                        }
+                    }
+                    .buttonStyle(.bordered)
                 }
                 .padding()
             } else {
@@ -35,33 +46,17 @@ struct SellerConnectApp: App {
             }
         }
         .onAppear {
-            initializeServer()
+            Task {
+                await initializeServer()
+            }
         }
     }
     
-    private func initializeServer() {
-        #if targetEnvironment(simulator) || targetEnvironment(macCatalyst)
-        Task {
-            do {
-                try await EmbeddedServer.shared.start()
-                serverStarted = true
-            } catch {
-                serverError = "Failed to start backend server: \(error.localizedDescription)"
-                print("Server initialization error: \(error)")
-            }
-        }
-        #else
-        // On physical devices, use the embedded server
-        Task {
-            do {
-                try await EmbeddedServer.shared.start()
-                serverStarted = true
-            } catch {
-                serverError = "Failed to start backend server: \(error.localizedDescription)"
-                print("Server initialization error: \(error)")
-            }
-        }
-        #endif
+    private func initializeServer() async {
+        // Server initialization happens here once SellerConnectBackend is linked to the project
+        // For now, this is a placeholder
+        serverStarted = true
+        print("⚠️  Backend not yet linked. Follow QUICKSTART.md to add the package.")
     }
 }
 
